@@ -1,5 +1,8 @@
 package twitter;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 import twitter4j.Query;
@@ -7,28 +10,41 @@ import twitter4j.QueryResult;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.conf.ConfigurationBuilder;
 
 public class TwitterApp {
 
-	public static void main(String[] args) throws TwitterException {
-		ConfigurationBuilder cb = new ConfigurationBuilder();
-		cb.setDebugEnabled(true)
-		  .setOAuthConsumerKey("0AhYPKEblgpFYZ0VNCutciw3s")
-		  .setOAuthConsumerSecret("hpnrlyPSoYJiQJM6JL2i8Y99j4dXoYQEnCEy1EDyOsxAeHBroX")
-		  .setOAuthAccessToken("1082398505770119168-tPVDuT0RFKs7vpSFjaqYVRU9MzmcPK")
-		  .setOAuthAccessTokenSecret("MbPt5iTZyRFYyhDbSLPgLLG9DNjpNVP9ZeMvgj8frXGuz");
-		TwitterFactory tf = new TwitterFactory(cb.build());
-		Twitter twitter = tf.getInstance();
-		
+	public static void main(String[] args) throws TwitterException, IOException {
+		Configuracao config = new Configuracao();
+		Twitter twitter = config.ObterConfiguracao();
+		File file = new File("teste.txt");
+        
+        // creates the file
+        file.createNewFile();
+        
+     // creates a FileWriter Object
+        FileWriter writer = new FileWriter(file); 
+
 		try {
-            Query query = new Query("#nfl");
+			Arquivo arquivo = new Arquivo();
+            Query query = new Query("nfl");
             QueryResult result = twitter.search(query);
             List<Status> tweets = result.getTweets();
             for (Status tweet : tweets) {
-                System.out.println("@" + tweet.getUser().getScreenName() + " - " + tweet.getText() + "- location - " + tweet.getPlace() + "----" + tweet.getCreatedAt().toString());
+            	if(!tweet.isRetweeted()) {
+	                arquivo.setIdtwitter(tweet.getId());
+	                arquivo.setMensagem(tweet.getText());
+	                arquivo.setData(tweet.getCreatedAt());
+            		System.out.println("id: " + arquivo.getIdTwitter());
+            		System.out.println("mensagem: " + arquivo.getMensagem());
+            		System.out.println("data: " + arquivo.getDataFormatada());
+            
+            		writer.write("1;" + arquivo.getMensagem() + ";" + arquivo.getDataFormatada() + "\n");
+            		
+            	}
             }
+            writer.flush();
+            writer.close();
+            
             
         } catch (TwitterException te) {
             te.printStackTrace();
