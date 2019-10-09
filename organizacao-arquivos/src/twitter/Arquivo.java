@@ -19,7 +19,7 @@ public class Arquivo {
 	}
 	
 	public String getMensagem() {
-		return mensagem.replaceAll("\r", "").replaceAll("\n", "");
+		return String.format("%-280.280s",mensagem.replaceAll("\r", "").replaceAll("\n", ""));
 	}
 	public void setMensagem(String mensagem) {
 		this.mensagem = mensagem;

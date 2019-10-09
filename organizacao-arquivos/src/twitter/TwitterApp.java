@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import twitter4j.HashtagEntity;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
@@ -31,14 +32,19 @@ public class TwitterApp {
             List<Status> tweets = result.getTweets();
             for (Status tweet : tweets) {
             	if(!tweet.isRetweeted()) {
+            		HashtagEntity[] hashtag =  tweet.getHashtagEntities();
+            		if(hashtag.length > 0)
+            			System.out.println("Hashtag:" + hashtag[0].getText());
 	                arquivo.setIdtwitter(tweet.getId());
 	                arquivo.setMensagem(tweet.getText());
 	                arquivo.setData(tweet.getCreatedAt());
             		System.out.println("id: " + arquivo.getIdTwitter());
             		System.out.println("mensagem: " + arquivo.getMensagem());
             		System.out.println("data: " + arquivo.getDataFormatada());
-            
-            		writer.write("1;" + arquivo.getMensagem() + ";" + arquivo.getDataFormatada() + "\n");
+        			
+            		
+            		
+            		writer.write(Long.toString(arquivo.getIdTwitter()) + arquivo.getMensagem() + arquivo.getMensagem().length() + arquivo.getDataFormatada() + "\n");
             		
             	}
             }
