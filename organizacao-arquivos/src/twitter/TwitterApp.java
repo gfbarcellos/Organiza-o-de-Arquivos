@@ -1,8 +1,10 @@
 package twitter;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import twitter4j.HashtagEntity;
@@ -14,22 +16,22 @@ import twitter4j.TwitterException;
 
 public class TwitterApp {
 
+	private static List<Status> tweets = new ArrayList<Status>();
+	
 	public static void main(String[] args) throws TwitterException, IOException {
 		Configuracao config = new Configuracao();
 		Twitter twitter = config.ObterConfiguracao();
 		File file = new File("teste.txt");
         
-        // creates the file
-        file.createNewFile();
-        
      // creates a FileWriter Object
-        FileWriter writer = new FileWriter(file); 
-
+        FileWriter writer = new FileWriter(file,true); 
+        BufferedWriter buffWriter = new BufferedWriter(writer);
 		try {
 			Arquivo arquivo = new Arquivo();
             Query query = new Query("nfl");
+            query.setCount(100);
             QueryResult result = twitter.search(query);
-            List<Status> tweets = result.getTweets();
+            tweets = result.getTweets();
             for (Status tweet : tweets) {
             	if(!tweet.isRetweeted()) {
             		HashtagEntity[] hashtag =  tweet.getHashtagEntities();
@@ -43,12 +45,11 @@ public class TwitterApp {
             		System.out.println("data: " + arquivo.getDataFormatada());
         			
             		
-            		
-            		writer.write(Long.toString(arquivo.getIdTwitter()) + arquivo.getMensagem() + arquivo.getMensagem().length() + arquivo.getDataFormatada() + "\n");
-            		
+            		buffWriter.write(arquivo.getIdTwitter() + arquivo.getMensagem() + arquivo.getDataFormatada() + "\n");
             	}
             }
             writer.flush();
+            buffWriter.close();
             writer.close();
             
             
@@ -58,5 +59,4 @@ public class TwitterApp {
             System.exit(-1);
         }
 	}
-
 }
