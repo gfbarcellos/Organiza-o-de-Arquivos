@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 import twitter4j.HashtagEntity;
 import twitter4j.Query;
@@ -32,6 +33,9 @@ public class TwitterApp {
             query.setCount(100);
             QueryResult result = twitter.search(query);
             tweets = result.getTweets();
+            Collections.reverse(tweets);
+            
+            
             for (Status tweet : tweets) {
             	if(!tweet.isRetweeted()) {
             		HashtagEntity[] hashtag =  tweet.getHashtagEntities();
