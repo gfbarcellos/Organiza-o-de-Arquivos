@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Collections;
 
 import twitter4j.HashtagEntity;
@@ -39,6 +40,7 @@ public class TwitterApp {
         int remainingTweets = 1000;
 
         try {
+        	int indice = ultimo_indice();
 			while(remainingTweets > 0) {
 				Query query = new Query("nfl");
 	            query.setCount(100);
@@ -46,7 +48,7 @@ public class TwitterApp {
 	            tweets = result.getTweets();
 	            Collections.reverse(tweets);
 	            long ultimoIdTwitterInserido = ultimo_idTwitter();
-	            int indice = ultimo_indice();	            
+	            	            
 	            for (Status tweet : tweets) {
 	            	if(!tweet.isRetweeted() && tweet.getId() > ultimoIdTwitterInserido) {
 	            		
@@ -80,6 +82,7 @@ public class TwitterApp {
             System.out.println("Failed to search tweets: " + te.getMessage());
             System.exit(-1);
         }
+        
 	}
 
 	private static Arquivo testes_print(Status tweet) {
@@ -115,7 +118,7 @@ public class TwitterApp {
 				}
 			}
 			
-			if (ultimo.equals(String.valueOf('0')))
+			if (ultimo.equals(String.valueOf('0')) )
 			{
 				
 			}
@@ -158,6 +161,7 @@ public class TwitterApp {
 			}
 			else
 			{
+				System.out.println("Aqui tem erro: " + ultimo);
 				ultimo = ultimo.substring(0,19);
 			}
 	
@@ -173,4 +177,6 @@ public class TwitterApp {
 	
 		return Long.parseLong(ultimo);
 	}
+	
+	
 }
