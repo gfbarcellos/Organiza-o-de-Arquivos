@@ -2,7 +2,6 @@ package twitter;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,7 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Collections;
 
 import twitter4j.HashtagEntity;
@@ -23,69 +21,87 @@ import twitter4j.TwitterException;
 public class TwitterApp {
 
 	private static List<Status> tweets = new ArrayList<Status>();
-	
+	private static List<Status> tweetsInseridos = new ArrayList<Status>();
 	public static void main(String[] args) throws TwitterException, IOException {
 		Configuracao config = new Configuracao();
 		Twitter twitter = config.ObterConfiguracao();
-		File file = new File("teste.txt");
-		File file_indice_id = new File("teste_indice_id.txt");
-		
-     // creates a FileWriter Object
-        FileWriter writer = new FileWriter(file,true); 
-        BufferedWriter buffWriter = new BufferedWriter(writer);
         
-        FileWriter writer_id = new FileWriter(file_indice_id,true);
-        BufferedWriter buffWriter_id = new BufferedWriter(writer_id);
+		int remainingTweets = 100;
         
-        int remainingTweets = 1000;
-
-        try {
-        	int indice = ultimo_indice();
+		try {
 			while(remainingTweets > 0) {
-				Query query = new Query("nfl");
-	            query.setCount(100);
-	            QueryResult result = twitter.search(query);
-	            tweets = result.getTweets();
-	            Collections.reverse(tweets);
-	            long ultimoIdTwitterInserido = ultimo_idTwitter();
-	            	            
-	            for (Status tweet : tweets) {
-	            	if(!tweet.isRetweeted() && tweet.getId() > ultimoIdTwitterInserido) {
-	            		
-	            		Arquivo arquivo = testes_print(tweet);
-	            		//Inserção Arquivo de Dados	
-	            		System.out.println("último indice twitter: " + ultimoIdTwitterInserido);
-	            		buffWriter.write(arquivo.getIdTwitter() + arquivo.getMensagem() + arquivo.getDataFormatada() + "\n");
-	            		ultimoIdTwitterInserido = arquivo.getIdTwitter();
-	            		
-	            		//Inserção Arquivo de Índice
-	            		String string_indicie = Integer.toString(indice);
-	            		buffWriter_id.write(String.format("%6.6s", string_indicie) + arquivo.getIdTwitter() + "\n");
-	            		System.out.println("indice: " + indice);
-	            		indice++;
-	            	}
-	            	System.out.println("");
-	            }
-	            remainingTweets = remainingTweets - tweets.size();
+	            BuscarTweets(twitter);         
+	            InserirArquivoDeDados();
+	            InserirArquivoIndice();
+	            
+	            remainingTweets = remainingTweets - tweetsInseridos.size();
 			}
-			
-			writer.flush();
-            buffWriter.close();
-            writer.close();
-            
-            writer_id.flush();
-            buffWriter_id.close();
-            writer_id.close();
             
         } catch (TwitterException te) {
             te.printStackTrace();
             System.out.println("Failed to search tweets: " + te.getMessage());
             System.exit(-1);
         }
+	}
+	
+	private static void InserirArquivoDeDados() throws IOException {
+		
+		FileWriter writer = new FileWriter("teste.txt",true); 
+        BufferedWriter buffWriter = new BufferedWriter(writer);
+        tweetsInseridos.clear();
         
+		long ultimoIdTwitterInserido = ultimo_idTwitter();
+        for (Status tweet : tweets) {
+        	if(!tweet.isRetweet() && tweet.getId() > ultimoIdTwitterInserido) {
+        		Arquivo arquivo = CriarModelo(tweet);
+        		System.out.println("último indice twitter: " + ultimoIdTwitterInserido);
+        		buffWriter.write(arquivo.getIdTwitter() + arquivo.getMensagem() + arquivo.getDataFormatada() + "\n");
+        		ultimoIdTwitterInserido = arquivo.getIdTwitter();
+        		
+        		tweetsInseridos.add(tweet);
+        	}
+        	System.out.println("");
+        }
+        
+        
+        writer.flush();
+        buffWriter.close();
+        writer.close();
+	}
+	
+	
+	private static void InserirArquivoIndice() throws IOException {
+		FileWriter writerIndc = new FileWriter("teste_indice_id.txt",true); 
+        BufferedWriter buffWriterIndc = new BufferedWriter(writerIndc);
+        
+        int indice = ultimo_indice();
+		for (Status tweet : tweetsInseridos) {
+    		Arquivo arquivo = CriarModelo(tweet);	            		
+    		//Inserção Arquivo de Índice
+    		String string_indicie = Integer.toString(indice);
+    		buffWriterIndc.write(String.format("%6.6s", string_indicie) + arquivo.getIdTwitter() + "\n");
+    		System.out.println("indice: " + indice);
+    		indice++;
+    		
+    		System.out.println("");
+        	
+        }
+		
+		writerIndc.flush();
+        buffWriterIndc.close();
+        writerIndc.close();
+	}
+	
+	private static void BuscarTweets(Twitter twitter) throws TwitterException{
+		Query query = new Query("nfl");
+        query.setCount(100);
+        QueryResult result = twitter.search(query);
+        tweets = result.getTweets();
+        Collections.reverse(tweets);
+
 	}
 
-	private static Arquivo testes_print(Status tweet) {
+	private static Arquivo CriarModelo(Status tweet) {
 		HashtagEntity[] hashtag =  tweet.getHashtagEntities();
 		if(hashtag.length > 0)
 			System.out.println("Hashtag:" + hashtag[0].getText());
@@ -105,6 +121,7 @@ public class TwitterApp {
 	{	
 	
 		String ultimo = "0";
+		int retorno = 0;
 		try {
 			InputStream file = new FileInputStream("teste_indice_id.txt");
 			InputStreamReader file_reader = new InputStreamReader(file);
@@ -118,9 +135,9 @@ public class TwitterApp {
 				}
 			}
 			
-			if (ultimo.equals(String.valueOf('0')) )
+			if (ultimo.equals(String.valueOf('0')))
 			{
-				
+
 			}
 			else
 			{
@@ -134,8 +151,11 @@ public class TwitterApp {
 		}
 		
 		ultimo = ultimo.trim();
-	
-		return Integer.parseInt(ultimo);
+		
+		
+		retorno =  Integer.parseInt(ultimo);
+		retorno++;
+		return retorno;
 	}
 	
 	public static long ultimo_idTwitter()
@@ -161,7 +181,6 @@ public class TwitterApp {
 			}
 			else
 			{
-				System.out.println("Aqui tem erro: " + ultimo);
 				ultimo = ultimo.substring(0,19);
 			}
 	
@@ -177,6 +196,4 @@ public class TwitterApp {
 	
 		return Long.parseLong(ultimo);
 	}
-	
-	
 }
