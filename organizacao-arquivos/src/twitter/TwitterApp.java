@@ -55,7 +55,7 @@ public class TwitterApp {
         	if(!tweet.isRetweet() && tweet.getId() > ultimoIdTwitterInserido) {
         		Arquivo arquivo = CriarModelo(tweet);
         		System.out.println("último indice twitter: " + ultimoIdTwitterInserido);
-        		buffWriter.write(arquivo.getIdTwitter() + arquivo.getMensagem() + arquivo.getDataFormatada() + "\n");
+        		buffWriter.write(arquivo.getIdTwitter() + arquivo.getMensagem() + arquivo.getDataFormatada() + arquivo.getHashtags() + "\n");
         		ultimoIdTwitterInserido = arquivo.getIdTwitter();
         		
         		tweetsInseridos.add(tweet);
@@ -102,17 +102,15 @@ public class TwitterApp {
 	}
 
 	private static Arquivo CriarModelo(Status tweet) {
-		HashtagEntity[] hashtag =  tweet.getHashtagEntities();
-		if(hashtag.length > 0)
-			System.out.println("Hashtag:" + hashtag[0].getText());
 		Arquivo arquivo = new Arquivo();
 		arquivo.setIdtwitter(tweet.getId());
         arquivo.setMensagem(tweet.getText());
         arquivo.setData(tweet.getCreatedAt());
+        arquivo.setHashtags(tweet.getHashtagEntities());
 		System.out.println("id: " + arquivo.getIdTwitter());
 		System.out.println("mensagem: " + arquivo.getMensagem());
 		System.out.println("data: " + arquivo.getDataFormatada());
-		
+		System.out.println("Hashtags: " + arquivo.getHashtags());
 		return arquivo;
 	
 	}
