@@ -22,6 +22,7 @@ public class TwitterApp {
 
 	private static List<Status> tweets = new ArrayList<Status>();
 	private static List<Status> tweetsInseridos = new ArrayList<Status>();
+	private static List<String> hastagList = new ArrayList();
 	public static void main(String[] args) throws TwitterException, IOException {
 		Configuracao config = new Configuracao();
 		Twitter twitter = config.ObterConfiguracao();
@@ -36,6 +37,8 @@ public class TwitterApp {
 	            
 	            remainingTweets = remainingTweets - tweetsInseridos.size();
 			}
+			
+			InserirArquivoHastags();
             
         } catch (TwitterException te) {
             te.printStackTrace();
@@ -59,6 +62,7 @@ public class TwitterApp {
         		ultimoIdTwitterInserido = arquivo.getIdTwitter();
         		
         		tweetsInseridos.add(tweet);
+        		addListaHastags(arquivo.getHashtags());
         	}
         	System.out.println("");
         }
@@ -193,5 +197,38 @@ public class TwitterApp {
 		ultimo = ultimo.trim();
 	
 		return Long.parseLong(ultimo);
+	}
+	
+	public static void addListaHastags( String hastags_juntas )
+	{	
+		//Recebe por parâmetro a string com as hastags
+		//Separa cada uma no vetor
+		String hastags[] = hastags_juntas.split(",");
+		//Itera para cada hastag
+		for(int i = 0; i<hastags.length; i++)
+		{
+			if(!hastags[i].isEmpty())
+			{
+				//Insere a hastag na lista
+				hastagList.add(hastags[i]);
+			}		
+		}
+	}
+	
+	public static void InserirArquivoHastags() throws IOException {
+		FileWriter writerIndc = new FileWriter("teste_indice_hastag.txt",true); 
+        BufferedWriter buffWriterIndc = new BufferedWriter(writerIndc);
+        
+        Collections.sort(hastagList);
+        
+        for(String hastag : hastagList)
+        {
+        	buffWriterIndc.write(hastag + "\n");
+        	System.out.println("E agora, José?: " + hastag);
+        }
+
+		writerIndc.flush();
+        buffWriterIndc.close();
+        writerIndc.close();
 	}
 }
