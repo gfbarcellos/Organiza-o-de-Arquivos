@@ -22,7 +22,7 @@ public class TwitterApp {
 
 	private static List<Status> tweets = new ArrayList<Status>();
 	private static List<Status> tweetsInseridos = new ArrayList<Status>();
-	private static List<String> hastagList = new ArrayList();
+	private static List<String> hashtagList = new ArrayList();
 	public static void main(String[] args) throws TwitterException, IOException {
 		Configuracao config = new Configuracao();
 		Twitter twitter = config.ObterConfiguracao();
@@ -210,7 +210,7 @@ public class TwitterApp {
 			if(!hastags[i].isEmpty())
 			{
 				//Insere a hastag na lista
-				hastagList.add(hastags[i]);
+				hashtagList.add(hastags[i]);
 			}		
 		}
 	}
@@ -219,9 +219,9 @@ public class TwitterApp {
 		FileWriter writerIndc = new FileWriter("teste_indice_hastag.txt",true); 
         BufferedWriter buffWriterIndc = new BufferedWriter(writerIndc);
         
-        Collections.sort(hastagList);
+        Collections.sort(hashtagList);
         
-        for(String hastag : hastagList)
+        for(String hastag : hashtagList)
         {
         	buffWriterIndc.write(hastag + "\n");
         	System.out.println("E agora, José?: " + hastag);
