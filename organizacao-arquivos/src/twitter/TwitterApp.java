@@ -30,6 +30,8 @@ public class TwitterApp {
 		int remainingTweets = 100;
         
 		try {
+			
+			BuscaArquivoHashtag();
 			while(remainingTweets > 0) {
 	            BuscarTweets(twitter);         
 	            InserirArquivoDeDados();
@@ -216,19 +218,53 @@ public class TwitterApp {
 	}
 	
 	public static void InserirArquivoHastags() throws IOException {
+		String ultimo = "xxxx";
 		FileWriter writerIndc = new FileWriter("teste_indice_hastag.txt",true); 
         BufferedWriter buffWriterIndc = new BufferedWriter(writerIndc);
         
         Collections.sort(hashtagList);
         
-        for(String hastag : hashtagList)
+        for(String hashtag : hashtagList)
         {
-        	buffWriterIndc.write(hastag + "\n");
-        	System.out.println("E agora, José?: " + hastag);
+        	
+        	if(!ultimo.equals(hashtag))
+			{
+        		buffWriterIndc.write(String.format("%200.200s", hashtag) + "\n");
+            	System.out.println("Hashtag: " + hashtag);;
+			}
+			ultimo = hashtag;
+
         }
 
 		writerIndc.flush();
         buffWriterIndc.close();
         writerIndc.close();
+	}
+	
+	public static void BuscaArquivoHashtag() throws IOException {
+		
+		String ultimo = " ";
+		try {
+			InputStream file = new FileInputStream("teste_indice_hastag.txt");
+			InputStreamReader file_reader = new InputStreamReader(file);
+			BufferedReader buffer = new BufferedReader(file_reader);
+	
+			String line = " ";
+			while (line != null) 
+			{					
+				line = buffer.readLine();
+				if(line !=null ) {
+					System.out.println("Alou: " + line);
+					ultimo = line.substring(0,200);
+					ultimo = ultimo.trim();
+					hashtagList.add(ultimo);
+				}
+			}
+		 	
+			buffer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	
 	}
 }
