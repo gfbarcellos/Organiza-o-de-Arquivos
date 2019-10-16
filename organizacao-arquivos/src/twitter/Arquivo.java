@@ -43,6 +43,6 @@ public class Arquivo {
 			lista.add(hash.getText());
 		}
 		
-		this.hashtags = String.join(",", lista);
+		this.hashtags =String.format("%-280.280s",String.join(",", lista));
 	}
 }
