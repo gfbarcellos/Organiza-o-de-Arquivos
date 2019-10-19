@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import twitter4j.HashtagEntity;
+import twitter4j.Status;
 
 public class Arquivo {
 	
@@ -12,6 +13,19 @@ public class Arquivo {
 	private String mensagem;
 	private Date data;
 	private String hashtags;
+	
+	
+	public Arquivo(Status tweet) {
+		this.setIdtwitter(tweet.getId());
+		this.setMensagem(tweet.getText());
+		this.setData(tweet.getCreatedAt());
+		this.setHashtags(tweet.getHashtagEntities());
+		System.out.println("id: " + this.getIdTwitter());
+		System.out.println("mensagem: " + this.getMensagem());
+		System.out.println("data: " + this.getDataFormatada());
+		System.out.println("Hashtags: " + this.getHashtags());
+	}
+	
 	
 	public long getIdTwitter() {
 		return idTwitter;
