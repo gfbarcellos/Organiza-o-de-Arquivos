@@ -1,32 +1,32 @@
-RedSea        
-InBrotherhood 
-RavensFlock   
-GoBills       
-KeepPounding  
-Bears100      
-SeizeTheDEY   
-Browns        54
-DallasCowboys 
-BroncosCountry
-OnePride      
-GoPackGo      
-WeAreTexans   
-Colts         340
-DUUUVAL       
-ChiefsKingdom 51
-BoltUp        
-LARams        
-FinsUp        
-Skol          
+RedSea        1038
+InBrotherhood 1048
+RavensFlock   1403,1417,1533,1606
+GoBills       1048
+KeepPounding  1050
+Bears100      1316,1533,1537,1606
+SeizeTheDEY   1045
+Browns        54,1050
+DallasCowboys 839,1004,1488,1745
+BroncosCountry515
+OnePride      954,1045
+GoPackGo      744,1045
+WeAreTexans   380,1038
+Colts         340,1038,1161
+DUUUVAL       1045
+ChiefsKingdom 51,524,574
+BoltUp        1533,1606
+LARams        1048,1365
+FinsUp        1048
+Skol          1045
 GoPats        
-Saints        54,240,340
-GiantsPride   308
+Saints        54,240,340,407,734,1099,1210,1225,1289,1316,1375,1419,1477,1533,1537,1599,1600,1606,1610,1667,1701
+GiantsPride   308,1038
 TakeFlight    
-RaiderNation  
-FlyEaglesFly  
-HereWeGo      
-GoNiners      
-Seahawks      
+RaiderNation  1045
+FlyEaglesFly  1338,1488,1495,1745
+HereWeGo      1050
+GoNiners      1038
+Seahawks      802,1323,1340,1365,1417,1533,1606,1669
 GoBucs        
-Titans        251
-HTTR          
+Titans        251,1073,1202,1373,1533,1606,1666
+HTTR          929,1038
