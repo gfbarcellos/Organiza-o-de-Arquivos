@@ -36,19 +36,19 @@ public class TwitterApp {
 		Configuracao config = new Configuracao();
 		Twitter twitter = config.ObterConfiguracao();
 
-		int qntdBuscas = 14;
+		int remainingTweets = 200;
 		try {
 			
 			//Descomentar a linha abaixo apenas se o arquivo de hashtags ainda não foi criado
 			//CriarArquivoHashtags();
 			
-			while (qntdBuscas > 0) {
+			while (remainingTweets > 0) {
 				BuscarTweets(twitter);
 				InserirArquivoDeDados();
 				InserirArquivoIndice();
 				InserirArquivoHashtags();
 				
-				qntdBuscas--;
+				remainingTweets = remainingTweets - tweetsInseridos.size();
 				arquivoDadosList.clear();
 				arquivoIndiceList.clear();
 			}
