@@ -14,9 +14,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import twitter4j.Query;
 import twitter4j.QueryResult;
+import twitter4j.RateLimitStatus;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -26,31 +28,35 @@ public class TwitterApp {
 	private static List<Status> tweets = new ArrayList<Status>();
 	private static List<Status> tweetsInseridos = new ArrayList<Status>();
 	private RandomAccessFile arquivo;
+	private static int ultimoIndice = 0;
 	
 	
 	//Listas arquivos
 	private static List<Arquivo> arquivoDadosList = new ArrayList<Arquivo>();
 	private static List<ArquivoIndice> arquivoIndiceList = new ArrayList<ArquivoIndice>();
 
-	public static void main(String[] args) throws TwitterException, IOException {
+	public static void main(String[] args) throws TwitterException, IOException, InterruptedException {
 		Configuracao config = new Configuracao();
 		Twitter twitter = config.ObterConfiguracao();
-
-		int remainingTweets = 200;
 		try {
 			
 			//Descomentar a linha abaixo apenas se o arquivo de hashtags ainda não foi criado
 			//CriarArquivoHashtags();
-			
-			while (remainingTweets > 0) {
-				BuscarTweets(twitter);
-				InserirArquivoDeDados();
-				InserirArquivoIndice();
-				InserirArquivoHashtags();
-				
-				remainingTweets = remainingTweets - tweetsInseridos.size();
-				arquivoDadosList.clear();
-				arquivoIndiceList.clear();
+			while (ultimoIndice < 120000) {
+				if(PodeRealizarBusca(twitter)) {
+					BuscarTweets(twitter);
+					InserirArquivoDeDados();
+					InserirArquivoIndice();
+					InserirArquivoHashtags();
+					arquivoDadosList.clear();
+					arquivoIndiceList.clear();
+					
+					Thread.sleep(5000);
+				}
+				else {
+					//Thread.sleep (ObterTempoEspera(twitter));
+					System.out.println(ObterTempoEspera(twitter));
+				}
 			}
 	
 		} catch (TwitterException te) {
@@ -59,6 +65,17 @@ public class TwitterApp {
 			System.exit(-1);
 		}
 
+	}
+	
+	private static boolean PodeRealizarBusca(Twitter twitter) throws TwitterException {
+		RateLimitStatus status = twitter.getRateLimitStatus("search").get("/search/tweets");
+		System.out.println("Buscar Restantes: " + status.getRemaining());
+		return status.getRemaining() > 1;
+	}
+	
+	private static int ObterTempoEspera(Twitter twitter) throws TwitterException {
+		RateLimitStatus status = twitter.getRateLimitStatus("search").get("/search/tweets");
+		return status.getSecondsUntilReset() * 1000;
 	}
 
 	private static void InserirArquivoDeDados() throws IOException {
@@ -98,6 +115,7 @@ public class TwitterApp {
 			String string_indice = Integer.toString(arquivoIndice.getIndice());
 			buffWriterIndc.write(String.format("%6.6s", string_indice) + arquivoIndice.getIdTwitter() + "\n");
 			System.out.println("indice: " + indice);
+			ultimoIndice = indice;
 			indice++;
 			
 			arquivoIndiceList.add(arquivoIndice);
@@ -261,9 +279,7 @@ public class TwitterApp {
 			buffer.close();
 			
 			String inputStr = inputBuffer.toString();
-			System.out.println(inputStr);
-			
-			
+
 	        FileOutputStream fileOut = new FileOutputStream("arquivo_hashtags.txt");
 	        fileOut.write(inputStr.getBytes());
 	        fileOut.close();
