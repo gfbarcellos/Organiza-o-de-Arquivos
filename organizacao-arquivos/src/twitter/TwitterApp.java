@@ -13,6 +13,7 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class TwitterApp {
 		try {
 			
 			//Descomentar a linha abaixo apenas se o arquivo de hashtags ainda não foi criado
-			//CriarArquivoHashtags();
+			CriarArquivoHashtags();
 			while (ultimoIndice < 120000) {
 				if(PodeRealizarBusca(twitter)) {
 					BuscarTweets(twitter);
@@ -321,4 +322,65 @@ public class TwitterApp {
 		return linha;
 		
 	}
+	
+	public static void TabelaHash( HashTab tabela[] )
+	{
+		
+		int max = 61;
+		/*
+		HashTab[] tabela = new HashTab[max];
+		for(int i=1;i<max;i++)
+		{
+			tabela[i] = new HashTab();
+		}
+		*/
+		int indice = 0;
+		String data,dataConvertida;
+		try {
+			InputStream file = new FileInputStream("hash.txt");
+			InputStreamReader file_reader = new InputStreamReader(file);
+			BufferedReader buffer = new BufferedReader(file_reader);
+
+			String line = "";
+			while (line != null) {
+				line = buffer.readLine();
+				if (line != null) {
+					indice++;
+					data = line.substring(299,309);
+					if(data.substring(2,3).contentEquals("/") && data.substring(5,6).contentEquals("/"))
+					{
+						dataConvertida = data.substring(6,10) + data.substring(3,5) + data.substring(0,2);
+						
+						if(tabela[indiceHash(Integer.parseInt(dataConvertida), max)].getIndice().equals("0"))//Ainda não tem valor
+						{
+							tabela[indiceHash(Integer.parseInt(dataConvertida), max)].setIndice(Integer.toString(indice));
+							tabela[indiceHash(Integer.parseInt(dataConvertida), max)].setData(data);
+						}
+						else
+						{
+							tabela[indiceHash(Integer.parseInt(dataConvertida), max)].setIndice(tabela[indiceHash(Integer.parseInt(dataConvertida), max)].getIndice() + "," + Integer.toString(indice));
+						}
+					}
+					
+				}
+			}
+			
+			for(int i=1;i<max;i++)
+			{
+				System.out.println(tabela[i].getData() + ";" +tabela[i].getIndice() );
+			}
+			
+			buffer.close();
+			file_reader.close();
+			file.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+
+	public static int indiceHash (int chave, int tamanho) {
+		return chave % tamanho;
+	}
+
 }
