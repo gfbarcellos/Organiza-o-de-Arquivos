@@ -87,7 +87,7 @@ public class BuscaBinaria {
 //		for(int i = 0; i < vet.length ; i++) {
 //			System.out.println(b.buscaBinaria(vet[i]));
 //		}
-		System.out.println(b.buscaBinaria(1188583535000424450L));
+		System.out.println(b.buscaBinaria(1188120260270084099L));
 
 	}
 

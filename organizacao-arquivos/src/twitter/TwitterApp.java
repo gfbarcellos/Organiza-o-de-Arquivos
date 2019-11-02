@@ -30,9 +30,8 @@ public class TwitterApp {
 	private static List<Status> tweetsInseridos = new ArrayList<Status>();
 	private RandomAccessFile arquivo;
 	private static int ultimoIndice = 0;
-	
-	
-	//Listas arquivos
+
+	// Listas arquivos
 	private static List<Arquivo> arquivoDadosList = new ArrayList<Arquivo>();
 	private static List<ArquivoIndice> arquivoIndiceList = new ArrayList<ArquivoIndice>();
 
@@ -40,26 +39,26 @@ public class TwitterApp {
 		Configuracao config = new Configuracao();
 		Twitter twitter = config.ObterConfiguracao();
 		try {
-			
-			//Descomentar a linha abaixo apenas se o arquivo de hashtags ainda não foi criado
+
+			// Descomentar a linha abaixo apenas se o arquivo de hashtags ainda não foi
+			// criado
 			CriarArquivoHashtags();
 			while (ultimoIndice < 120000) {
-				if(PodeRealizarBusca(twitter)) {
+				if (PodeRealizarBusca(twitter)) {
 					BuscarTweets(twitter);
 					InserirArquivoDeDados();
 					InserirArquivoIndice();
 					InserirArquivoHashtags();
 					arquivoDadosList.clear();
 					arquivoIndiceList.clear();
-					
+
 					Thread.sleep(5000);
-				}
-				else {
-					//Thread.sleep (ObterTempoEspera(twitter));
+				} else {
+					// Thread.sleep (ObterTempoEspera(twitter));
 					System.out.println(ObterTempoEspera(twitter));
 				}
 			}
-	
+
 		} catch (TwitterException te) {
 			te.printStackTrace();
 			System.out.println("Failed to search tweets: " + te.getMessage());
@@ -67,13 +66,13 @@ public class TwitterApp {
 		}
 
 	}
-	
+
 	private static boolean PodeRealizarBusca(Twitter twitter) throws TwitterException {
 		RateLimitStatus status = twitter.getRateLimitStatus("search").get("/search/tweets");
 		System.out.println("Buscar Restantes: " + status.getRemaining());
 		return status.getRemaining() > 1;
 	}
-	
+
 	private static int ObterTempoEspera(Twitter twitter) throws TwitterException {
 		RateLimitStatus status = twitter.getRateLimitStatus("search").get("/search/tweets");
 		return status.getSecondsUntilReset() * 1000;
@@ -104,8 +103,7 @@ public class TwitterApp {
 		buffWriter.close();
 		writer.close();
 	}
-	
- 
+
 	private static void InserirArquivoIndice() throws IOException {
 		FileWriter writerIndc = new FileWriter("teste_indice_id.txt", true);
 		BufferedWriter buffWriterIndc = new BufferedWriter(writerIndc);
@@ -118,7 +116,7 @@ public class TwitterApp {
 			System.out.println("indice: " + indice);
 			ultimoIndice = indice;
 			indice++;
-			
+
 			arquivoIndiceList.add(arquivoIndice);
 		}
 
@@ -126,59 +124,60 @@ public class TwitterApp {
 		buffWriterIndc.close();
 		writerIndc.close();
 	}
-	
+
 	private static void CriarArquivoHashtags() throws IOException {
 		FileWriter writer;
 		writer = new FileWriter("arquivo_hashtags.txt", true);
 		BufferedWriter buffWriter = new BufferedWriter(writer);
 		List<String> HashtagsTimes = ObterListaHashtagsTimes();
-		for(String hashtag : HashtagsTimes) {
+		for (String hashtag : HashtagsTimes) {
 			writer.write(String.format("%-14.14s", hashtag) + "\n");
 		}
-		
+
 		writer.flush();
 		buffWriter.close();
 		writer.close();
 	}
-	
-	private static List<String> ObterListaHashtagsTimes(){
-		
-		//Fonte: https://ftw.usatoday.com/2019/09/2019-nfl-kickoff-every-nfl-teams-official-twitter-emoji-hashtag
-		
+
+	private static List<String> ObterListaHashtagsTimes() {
+
+		// Fonte:
+		// https://ftw.usatoday.com/2019/09/2019-nfl-kickoff-every-nfl-teams-official-twitter-emoji-hashtag
+
 		List<String> retorno = new ArrayList<String>();
-		retorno.add("RedSea");        // Arizona Cardinals
+		retorno.add("RedSea"); // Arizona Cardinals
 		retorno.add("InBrotherhood"); // Atlanta Falcons
-		retorno.add("RavensFlock");   // Baltimore Ravens
-		retorno.add("GoBills");       // Buffalo Bills
-		retorno.add("KeepPounding");  // Carolina Panthers
-		retorno.add("Bears100");      // Chicago Bears
-		retorno.add("SeizeTheDEY");   // Cincinnati Bengals
-		retorno.add("Browns");		  // Cleveland Browns
+		retorno.add("RavensFlock"); // Baltimore Ravens
+		retorno.add("GoBills"); // Buffalo Bills
+		retorno.add("KeepPounding"); // Carolina Panthers
+		retorno.add("Bears100"); // Chicago Bears
+		retorno.add("SeizeTheDEY"); // Cincinnati Bengals
+		retorno.add("Browns"); // Cleveland Browns
 		retorno.add("DallasCowboys"); // Dallas Cowboys
 		retorno.add("BroncosCountry");// Denver Broncos
-		retorno.add("OnePride");      // Detroit Lions
-		retorno.add("GoPackGo");	  // Green Bay Packers
-		retorno.add("WeAreTexans");   // Houston Texans
-		retorno.add("Colts");		  // Indianapolis Colts
-		retorno.add("DUUUVAL");		  // Jacksonville Jaguars
+		retorno.add("OnePride"); // Detroit Lions
+		retorno.add("GoPackGo"); // Green Bay Packers
+		retorno.add("WeAreTexans"); // Houston Texans
+		retorno.add("Colts"); // Indianapolis Colts
+		retorno.add("DUUUVAL"); // Jacksonville Jaguars
 		retorno.add("ChiefsKingdom"); // Kansas City Chiefs
-		retorno.add("BoltUp");		  // Los Angeles Chargers
-		retorno.add("LARams");		  // Los Angeles Rams
-		retorno.add("FinsUp");		  // Miami Dolphins
-		retorno.add("Skol");		  // Minnesota Vikings
-		retorno.add("GoPats");		  // New England Patriots
-		retorno.add("Saints");		  // New Orleans Saints
-		retorno.add("GiantsPride");   // New York Giants
-		retorno.add("TakeFlight");    // New York Jets
-		retorno.add("RaiderNation");  // Oakland Raiders
-		retorno.add("FlyEaglesFly");  // Philadelphia Eagles
-		retorno.add("HereWeGo");      // Pittsburgh Steelers
-		retorno.add("GoNiners");      // San Francisco 49ers
-		retorno.add("Seahawks");      // Seattle Seahawks
-		retorno.add("GoBucs");        // Tampa Bay Buccaneers
-		retorno.add("Titans");        // Tennessee Titans
-		retorno.add("HTTR");		  // Washington Redskins
-		
+		retorno.add("BoltUp"); // Los Angeles Chargers
+		retorno.add("LARams"); // Los Angeles Rams
+		retorno.add("FinsUp"); // Miami Dolphins
+		retorno.add("Skol"); // Minnesota Vikings
+		retorno.add("GoPats"); // New England Patriots
+		retorno.add("Saints"); // New Orleans Saints
+		retorno.add("GiantsPride"); // New York Giants
+		retorno.add("TakeFlight"); // New York Jets
+		retorno.add("RaiderNation"); // Oakland Raiders
+		retorno.add("FlyEaglesFly"); // Philadelphia Eagles
+		retorno.add("HereWeGo"); // Pittsburgh Steelers
+		retorno.add("GoNiners"); // San Francisco 49ers
+		retorno.add("Seahawks"); // Seattle Seahawks
+		retorno.add("GoBucs"); // Tampa Bay Buccaneers
+		retorno.add("Titans"); // Tennessee Titans
+		retorno.add("HTTR"); // Washington Redskins
+
 		return retorno;
 	}
 
@@ -268,7 +267,7 @@ public class TwitterApp {
 			BufferedReader buffer = new BufferedReader(file_reader);
 
 			StringBuffer inputBuffer = new StringBuffer();
-	        String line = "";
+			String line = "";
 			while (line != null) {
 				line = buffer.readLine();
 				if (line != null) {
@@ -276,66 +275,62 @@ public class TwitterApp {
 					inputBuffer.append("\n");
 				}
 			}
-			
+
 			buffer.close();
-			
+
 			String inputStr = inputBuffer.toString();
 
-	        FileOutputStream fileOut = new FileOutputStream("arquivo_hashtags.txt");
-	        fileOut.write(inputStr.getBytes());
-	        fileOut.close();
-			
+			FileOutputStream fileOut = new FileOutputStream("arquivo_hashtags.txt");
+			fileOut.write(inputStr.getBytes());
+			fileOut.close();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
-	
+
 	public static String AtualizarLinhaArquivoHashtags(String linha) {
-		String hashtag = linha.substring(0,14).trim();
-		
-		for(Arquivo arquivo : arquivoDadosList) {
+		String hashtag = linha.substring(0, 14).trim();
+
+		for (Arquivo arquivo : arquivoDadosList) {
 			List<String> hashtagsArquivo = Arrays.asList(arquivo.getHashtags().split(","));
-			for(String hashtagArquivo : hashtagsArquivo) {
-				if(hashtagArquivo.toUpperCase().equals(hashtag.toUpperCase()))
+			for (String hashtagArquivo : hashtagsArquivo) {
+				if (hashtagArquivo.toUpperCase().equals(hashtag.toUpperCase()))
 					linha = AdicionarNovoIndiceParaHashtag(arquivo, linha);
 			}
 		}
-		
+
 		return linha;
 	}
-	
+
 	public static String AdicionarNovoIndiceParaHashtag(Arquivo arquivo, String linha) {
 		int indice = 0;
-		for(ArquivoIndice arquivoIndice : arquivoIndiceList) {
-			if(arquivoIndice.getIdTwitter() == arquivo.getIdTwitter())
+		for (ArquivoIndice arquivoIndice : arquivoIndiceList) {
+			if (arquivoIndice.getIdTwitter() == arquivo.getIdTwitter())
 				indice = arquivoIndice.getIndice();
 		}
 		String hashtags = linha.substring(14);
-		if(!hashtags.contains(Integer.toString(indice))) {
-			if(hashtags.equals(""))
+		if (!hashtags.contains(Integer.toString(indice))) {
+			if (hashtags.equals(""))
 				return linha.concat(Integer.toString(indice));
-			
+
 			return linha.concat("," + Integer.toString(indice));
 		}
-		
+
 		return linha;
-		
+
 	}
-	
-	public static void TabelaHash( HashTab tabela[] )
-	{
-		
+
+	public static void TabelaHash(HashTab tabela[]) {
+
 		int max = 61;
 		/*
-		HashTab[] tabela = new HashTab[max];
-		for(int i=1;i<max;i++)
-		{
-			tabela[i] = new HashTab();
-		}
-		*/
+		 * HashTab[] tabela = new HashTab[max]; for(int i=1;i<max;i++) { tabela[i] = new
+		 * HashTab(); }
+		 */
 		int indice = 0;
-		String data,dataConvertida;
+		String data, dataConvertida;
 		try {
 			InputStream file = new FileInputStream("hash.txt");
 			InputStreamReader file_reader = new InputStreamReader(file);
@@ -346,30 +341,32 @@ public class TwitterApp {
 				line = buffer.readLine();
 				if (line != null) {
 					indice++;
-					data = line.substring(299,309);
-					if(data.substring(2,3).contentEquals("/") && data.substring(5,6).contentEquals("/"))
-					{
-						dataConvertida = data.substring(6,10) + data.substring(3,5) + data.substring(0,2);
-						
-						if(tabela[indiceHash(Integer.parseInt(dataConvertida), max)].getIndice().equals("0"))//Ainda não tem valor
+					data = line.substring(299, 309);
+					if (data.substring(2, 3).contentEquals("/") && data.substring(5, 6).contentEquals("/")) {
+						dataConvertida = data.substring(6, 10) + data.substring(3, 5) + data.substring(0, 2);
+
+						if (tabela[indiceHash(Integer.parseInt(dataConvertida), max)].getIndice().equals("0"))// Ainda
+																												// não
+																												// tem
+																												// valor
 						{
-							tabela[indiceHash(Integer.parseInt(dataConvertida), max)].setIndice(Integer.toString(indice));
+							tabela[indiceHash(Integer.parseInt(dataConvertida), max)]
+									.setIndice(Integer.toString(indice));
 							tabela[indiceHash(Integer.parseInt(dataConvertida), max)].setData(data);
-						}
-						else
-						{
-							tabela[indiceHash(Integer.parseInt(dataConvertida), max)].setIndice(tabela[indiceHash(Integer.parseInt(dataConvertida), max)].getIndice() + "," + Integer.toString(indice));
+						} else {
+							tabela[indiceHash(Integer.parseInt(dataConvertida), max)]
+									.setIndice(tabela[indiceHash(Integer.parseInt(dataConvertida), max)].getIndice()
+											+ "," + Integer.toString(indice));
 						}
 					}
-					
+
 				}
 			}
-			
-			for(int i=1;i<max;i++)
-			{
-				System.out.println(tabela[i].getData() + ";" +tabela[i].getIndice() );
+
+			for (int i = 1; i < max; i++) {
+				System.out.println(tabela[i].getData() + ";" + tabela[i].getIndice());
 			}
-			
+
 			buffer.close();
 			file_reader.close();
 			file.close();
@@ -377,10 +374,20 @@ public class TwitterApp {
 			e.printStackTrace();
 		}
 	}
-	
 
-	public static int indiceHash (int chave, int tamanho) {
+	public static int indiceHash(int chave, int tamanho) {
 		return chave % tamanho;
+	}
+
+	public void buscaPorId(int id) {
+		RandomAccessFile registroleitura;
+		try {
+			registroleitura = new RandomAccessFile("testexxx.txt", "rw");
+			registroleitura.seek((id-1) * 591);
+			String leitura = registroleitura.readLine();
+			System.out.println(leitura);
+		} catch (IOException e) {
+		}
 	}
 
 }
