@@ -28,7 +28,7 @@ public class HashTab {
 	public void setIndice(String indice) {
 		Indice = indice;
 	}	
-	public static void TabelaHash(  )
+	public void TabelaHash(  )
 	{
 		
 		int max = 61;
